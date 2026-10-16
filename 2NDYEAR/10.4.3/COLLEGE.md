@@ -1,5 +1,5 @@
-# Cisco Packet Tracer — Topology 3 Configuration Guide
-
+# Cisco Packet Tracer — Topology 3 COLLEGE Configuration Guide
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/45eb8681-92c4-4a06-a89b-59dfb986524a" />
 
 > **Topology:** 128.107.x.x IPv4 networks with IPv6 addressing  
 > **Goal:** Configure the `College` router, the accessible `Class-B` switch, and four PCs. Complete the addressing table and verify connectivity.
