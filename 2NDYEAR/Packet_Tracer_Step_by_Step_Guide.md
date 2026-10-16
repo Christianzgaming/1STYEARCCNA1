@@ -1,0 +1,362 @@
+# Cisco Packet Tracer — Step-by-Step Configuration Guide
+
+> **Goal:** Configure the `Floor14` router, the `Room-146` switch, and all four PCs using the supplied IPv4 and IPv6 settings.
+>
+> **Important:** Configure only the devices listed in this guide. The Room-145 switch is not included because it is not accessible in this activity.
+
+---
+
+## Table of Contents
+
+1. [Before You Start](#1-before-you-start)
+2. [Configure the Floor14 Router](#2-configure-the-floor14-router)
+3. [Configure the Room-146 Switch](#3-configure-the-room-146-switch)
+4. [Configure the PCs](#4-configure-the-pcs)
+5. [Verify the Configuration](#5-verify-the-configuration)
+6. [Troubleshooting Checklist](#6-troubleshooting-checklist)
+7. [Quick Reference](#7-quick-reference)
+
+---
+
+## 1. Before You Start
+
+1. Open your `.pkt` activity in **Cisco Packet Tracer**.
+2. Find the **Floor14 router**, the **Room-146 switch**, and these four PCs:
+   - `Manager-A`
+   - `Reception-A`
+   - `Manager-B`
+   - `Reception-B`
+3. When configuring a router or switch, click the device and open its **CLI** tab.
+4. If the initial setup dialog appears, type `no` and press **Enter** to continue to the CLI prompt.
+5. Enter the commands in the correct device. Do not paste router commands into the switch or vice versa.
+
+> **CLI tip:** You can type commands one at a time. If you paste a whole block, check that Packet Tracer accepts each command and returns to the prompt without an error.
+
+---
+
+## 2. Configure the Floor14 Router
+
+### Step 1 — Open the router CLI
+
+1. Click **Floor14**.
+2. Select the **CLI** tab.
+3. Press **Enter** until you see the command prompt.
+
+### Step 2 — Enter the configuration
+
+Copy and enter the following commands into the **Floor14 router CLI**:
+
+```cisco
+enable
+configure terminal
+
+! Basic security and hostname
+hostname Floor14
+enable secret class
+service password-encryption
+banner motd #Authorized Access Only#
+
+! Console password
+line console 0
+ password cisco
+ login
+ exit
+
+! VTY password
+line vty 0 4
+ password cisco
+ login
+ exit
+
+! G0/0 — Room-145 network
+interface g0/0
+ description Connection to Room-145
+ ip address 172.14.5.1 255.255.255.0
+ ipv6 address 2001:DB8:CAFE:1::1/64
+ ipv6 address FE80::1 link-local
+ no shutdown
+ exit
+
+! G0/1 — Room-146 network
+interface g0/1
+ description Connection to Room-146
+ ip address 172.14.10.1 255.255.255.0
+ ipv6 address 2001:DB8:CAFE:2::1/64
+ ipv6 address FE80::2 link-local
+ no shutdown
+ exit
+
+! Enable IPv6 routing
+ipv6 unicast-routing
+
+! Finish and save
+end
+write memory
+```
+
+### Step 3 — Check the router interfaces
+
+At the router prompt, run:
+
+```cisco
+show ip interface brief
+show ipv6 interface brief
+show running-config
+```
+
+- Confirm that `GigabitEthernet0/0` and `GigabitEthernet0/1` have the intended addresses.
+- The interfaces should show **up/up** once the connected links are active.
+- Check that `ipv6 unicast-routing` is present in the configuration.
+
+---
+
+## 3. Configure the Room-146 Switch
+
+> Configure **Room-146 only**. Do not attempt to configure the inaccessible Room-145 switch.
+
+### Step 1 — Open the switch CLI
+
+1. Click **Room-146**.
+2. Select the **CLI** tab.
+3. Press **Enter** until the command prompt appears.
+
+### Step 2 — Enter the configuration
+
+Copy and enter the following commands into the **Room-146 switch CLI**:
+
+```cisco
+enable
+configure terminal
+
+! Basic security and hostname
+hostname Room-146
+enable secret class
+service password-encryption
+banner motd #Authorized Access Only#
+
+! Console password
+line console 0
+ password cisco
+ login
+ exit
+
+! VTY password
+line vty 0 4
+ password cisco
+ login
+ exit
+
+! VLAN 1 management interface
+interface vlan 1
+ description Management Interface
+ ip address 172.14.10.35 255.255.255.0
+ no shutdown
+ exit
+
+! Default gateway for switch management
+ip default-gateway 172.14.10.1
+
+! Finish and save
+end
+write memory
+```
+
+### Step 3 — Check the switch
+
+Run these commands:
+
+```cisco
+show ip interface brief
+show running-config
+```
+
+Confirm that:
+
+- The hostname is `Room-146`.
+- VLAN 1 has IP address `172.14.10.35` with mask `255.255.255.0`.
+- The default gateway is `172.14.10.1`.
+- VLAN 1 may show down/down until an active switch port in VLAN 1 is connected. If so, check the cabling and port status.
+
+---
+
+## 4. Configure the PCs
+
+> **PCs are configured through the Desktop tab, not the CLI.** Repeat the steps below for each PC.
+
+### How to enter a PC's IP settings
+
+1. Click the PC.
+2. Open **Desktop**.
+3. Select **IP Configuration**.
+4. Enter the correct **IPv4 Address**, **Subnet Mask**, and **Default Gateway**.
+5. Enter the **IPv6 Address**, set **Prefix Length** to `64`, and enter the **IPv6 Gateway**.
+6. If an IPv6 field is labeled **IPv6 Default Gateway**, use that field for the gateway shown below.
+7. Close the PC window when finished.
+
+### Manager-A
+
+| Setting | Value |
+|---|---|
+| IPv4 Address | `172.14.5.50` |
+| Subnet Mask | `255.255.255.0` |
+| Default Gateway | `172.14.5.1` |
+| IPv6 Address | `2001:DB8:CAFE:1::50` |
+| IPv6 Prefix Length | `64` |
+| IPv6 Gateway | `FE80::1` |
+
+### Reception-A
+
+| Setting | Value |
+|---|---|
+| IPv4 Address | `172.14.5.60` |
+| Subnet Mask | `255.255.255.0` |
+| Default Gateway | `172.14.5.1` |
+| IPv6 Address | `2001:DB8:CAFE:1::60` |
+| IPv6 Prefix Length | `64` |
+| IPv6 Gateway | `FE80::1` |
+
+### Manager-B
+
+| Setting | Value |
+|---|---|
+| IPv4 Address | `172.14.10.50` |
+| Subnet Mask | `255.255.255.0` |
+| Default Gateway | `172.14.10.1` |
+| IPv6 Address | `2001:DB8:CAFE:2::50` |
+| IPv6 Prefix Length | `64` |
+| IPv6 Gateway | `FE80::2` |
+
+### Reception-B
+
+| Setting | Value |
+|---|---|
+| IPv4 Address | `172.14.10.60` |
+| Subnet Mask | `255.255.255.0` |
+| Default Gateway | `172.14.10.1` |
+| IPv6 Address | `2001:DB8:CAFE:2::60` |
+| IPv6 Prefix Length | `64` |
+| IPv6 Gateway | `FE80::2` |
+
+### PC addressing overview
+
+| Device | IPv4 Address | IPv4 Gateway | IPv6 Address | IPv6 Gateway |
+|---|---|---|---|---|
+| Manager-A | `172.14.5.50/24` | `172.14.5.1` | `2001:DB8:CAFE:1::50/64` | `FE80::1` |
+| Reception-A | `172.14.5.60/24` | `172.14.5.1` | `2001:DB8:CAFE:1::60/64` | `FE80::1` |
+| Manager-B | `172.14.10.50/24` | `172.14.10.1` | `2001:DB8:CAFE:2::50/64` | `FE80::2` |
+| Reception-B | `172.14.10.60/24` | `172.14.10.1` | `2001:DB8:CAFE:2::60/64` | `FE80::2` |
+
+---
+
+## 5. Verify the Configuration
+
+### Step 1 — Test IPv4 connectivity
+
+On each PC:
+
+1. Open **Desktop → Command Prompt**.
+2. Test the local gateway first. For example, on `Manager-A`, run:
+
+   ```text
+   ping 172.14.5.1
+   ```
+
+3. Test another PC in the same network. For example:
+
+   ```text
+   ping 172.14.5.60
+   ```
+
+4. Test a PC in the other network. For example:
+
+   ```text
+   ping 172.14.10.50
+   ```
+
+### Step 2 — Test IPv6 connectivity
+
+From `Manager-A`, try:
+
+```text
+ping 2001:DB8:CAFE:1::1
+ping 2001:DB8:CAFE:2::50
+```
+
+If a first ping fails, try it again after the network has had time to initialize. Also verify the IPv6 address, prefix length, gateway, interface state, and cabling.
+
+### Step 3 — Save and check the activity
+
+1. Confirm you ran `write memory` on both the router and the switch.
+2. Save the Packet Tracer activity file using **File → Save**.
+3. Click **Check Results** in the activity window.
+4. Review any items marked incomplete and correct only the settings identified by the activity.
+
+> **Score note:** A score of **127/127 (100%)** is the target stated for this activity, but the result depends on the activity file's assessment rules and any requirements not included in this guide. Use **Check Results** to confirm the actual score.
+
+---
+
+## 6. Troubleshooting Checklist
+
+If a ping fails or the assessment is not complete, check the following:
+
+- [ ] Commands were entered on the correct device.
+- [ ] The router hostname is `Floor14`.
+- [ ] Router interfaces `G0/0` and `G0/1` have the correct IPv4 and IPv6 addresses.
+- [ ] Both router interfaces have `no shutdown`.
+- [ ] `ipv6 unicast-routing` is configured on the router.
+- [ ] The switch hostname is `Room-146`.
+- [ ] VLAN 1 is configured as `172.14.10.35 255.255.255.0`.
+- [ ] The switch default gateway is `172.14.10.1`.
+- [ ] Every PC has the correct IPv4 address, subnet mask, and gateway.
+- [ ] Every PC has the correct IPv6 address, prefix length `64`, and IPv6 gateway.
+- [ ] Cables are connected to the correct ports and the links are active.
+- [ ] `write memory` was run on the router and switch.
+- [ ] The activity's **Check Results** panel was reviewed for any additional required items.
+
+### Useful router commands
+
+```cisco
+show ip interface brief
+show ipv6 interface brief
+show running-config
+show ip route
+show ipv6 route
+```
+
+### Useful switch commands
+
+```cisco
+show ip interface brief
+show running-config
+show vlan brief
+```
+
+---
+
+## 7. Quick Reference
+
+### Router interfaces
+
+| Interface | Network / Room | IPv4 Address | IPv6 Address |
+|---|---|---|---|
+| `G0/0` | Room-145 | `172.14.5.1/24` | `2001:DB8:CAFE:1::1/64` |
+| `G0/1` | Room-146 | `172.14.10.1/24` | `2001:DB8:CAFE:2::1/64` |
+
+### Switch management
+
+| Setting | Value |
+|---|---|
+| Hostname | `Room-146` |
+| VLAN 1 address | `172.14.10.35/24` |
+| Default gateway | `172.14.10.1` |
+| Enable secret | `class` |
+| Console / VTY password | `cisco` |
+| MOTD banner | `Authorized Access Only!` |
+
+### Final reminders
+
+- Router and switch commands go in the **CLI** tab.
+- PC IP settings go in **Desktop → IP Configuration**.
+- Save device configurations with `write memory`.
+- Confirm the final result with **Check Results**.
+
