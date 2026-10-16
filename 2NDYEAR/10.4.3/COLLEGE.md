@@ -1,4 +1,3 @@
-```markdown
 # Cisco Packet Tracer — Topology 3 Configuration Guide
 
 
@@ -329,4 +328,4 @@ If the first ping times out, wait briefly and try again. Confirm the IPv6 addres
 - Use **Desktop → IP Configuration** for each PC.
 - Pay special attention to link-local gateways: both sides use `FE80::1`.
 - Save device configurations, then confirm the actual result with **Check Results**.
-```
+
