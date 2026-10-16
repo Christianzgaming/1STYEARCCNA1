@@ -1,4 +1,5 @@
-# Cisco Packet Tracer — Topology 2 Configuration Guide
+# Cisco Packet Tracer Reception B — Topology 2 Configuration Guide
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/49bbd65c-7ac0-46bd-ac29-918a633b0626" />
 
 > **Topology:** 10.10.x.x IPv4 networks with IPv6 addressing  
 > **Goal:** Configure the `Floor14` router, the accessible `Room-146` switch, and four PCs. Complete the addressing table and verify connectivity.
